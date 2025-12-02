@@ -18,9 +18,17 @@ public class ReferralPathFinder {
     /**
      * Finds a referral path from the starting UniversityStudent to a target company.
      *
-     * @param start         the starting UniversityStudent
-     * @param targetCompany the company to find a referral path to
-     * @return a list of UniversityStudent objects representing the referral path
+     * <p>The method performs a Dijkstra-style exploration over the student graph
+     * where edge weights represent connection strength; a lower cost path is
+     * preferred. During traversal, if a student is found who previously
+     * interned at {@code targetCompany}, a path from {@code start} to that
+     * student is reconstructed and returned.</p>
+     *
+     * @param start         the starting UniversityStudent (must be in the graph)
+     * @param targetCompany the company to find a referral path to (case-insensitive)
+     * @return a list of {@link UniversityStudent} objects representing the referral path
+     *         from {@code start} -> ... -> studentWithInternAt(targetCompany). If no
+     *         such path exists an empty list is returned.
      */
     public List<UniversityStudent> findReferralPath(UniversityStudent start, String targetCompany) {
         Map<UniversityStudent, Double> dist = new HashMap<>();

@@ -22,7 +22,10 @@ public class FriendRequestThread implements Runnable {
     }
 
     /**
-     * Runs the friend request thread, sending the request from sender to receiver.
+        * Runs the friend request thread, sending the request from sender to receiver.
+        * <p>This method acquires a shared semaphore so friend-request console output
+        * is synchronized across concurrent threads. Interrupted exceptions are
+        * handled by re-setting the thread interrupt status and logging a message.</p>
      */
     @Override
     public void run() {
