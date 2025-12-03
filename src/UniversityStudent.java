@@ -1,11 +1,7 @@
 import java.util.*;
 
 /**
- * UniversityStudent represents a concrete student at a university and extends Student.
- * <p>
- * It stores roommate links, preferences and previous internships and implements
- * a simple connection-strength heuristic used by the graph-building code.
- *
+ * UniversityStudent represents a student at a university, extending the base Student class.
  */
 public class UniversityStudent extends Student {
     /** The currently assigned roommate (may be null). */
@@ -31,8 +27,8 @@ public class UniversityStudent extends Student {
         this.year = year;
         this.major = major;
         this.gpa = gpa;
-        this.roommatePreferences = roommatePreferences == null ? new ArrayList<>() : roommatePreferences;
-        this.previousInternships = previousInternships == null ? new ArrayList<>() : previousInternships;
+        this.roommatePreferences = roommatePreferences;
+        this.previousInternships = previousInternships;
         this.roommate = null;
     }
 
@@ -83,7 +79,7 @@ public class UniversityStudent extends Student {
                 }
             }
 
-            if (this.major != null && this.major.equals(o.major)) {
+            if (this.major.equals(o.major)) {
                 strength += 2;
             }
 

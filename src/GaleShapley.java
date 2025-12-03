@@ -4,19 +4,11 @@ import java.util.*;
  * GaleShapley provides an implementation of the Gale-Shapley algorithm for assigning roommates.
  */
 public class GaleShapley {
-	/**
-	 * Assigns roommates to the given list of {@link UniversityStudent} objects using
-	 * a variation of the Gale–Shapley stable matching algorithm.
-	 *
-	 * <p>Each student proposes to names on their preference list in order. A
-	 * proposal is only considered if the recipient also listed the proposer in
-	 * their preference list (mutual interest); unmatched students continue to
-	 * propose until their list is exhausted. The algorithm attempts to produce
-	 * reciprocal pairings but may leave students unpaired if preferences are
-	 * incomplete or unmatched.</p>
-	 *
-	 * @param students the list of {@link UniversityStudent} objects to assign roommates for
-	 */
+    /**
+     * Assigns roommates to the given list of UniversityStudent objects using the Gale-Shapley algorithm.
+     *
+     * @param students the list of UniversityStudent objects to assign roommates for
+     */
     public static void assignRoommates(List<UniversityStudent> students){
 		Map<UniversityStudent, UniversityStudent> roommatePairs = new HashMap<>();
 		Map<UniversityStudent, Integer> nextProposalIndex = new HashMap<>();
