@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 const API_BASE = 'http://localhost:8080/api';
 
 export default function ChatHistory() {
+  const [selectedCase, setSelectedCase] = useState("1");
   const [students, setStudents] = useState([]);
   const [studentA, setStudentA] = useState("");
   const [studentB, setStudentB] = useState("");
@@ -12,8 +13,27 @@ export default function ChatHistory() {
 
   // Fetch all students when component loads
   useEffect(() => {
+    setSelectedCase("1");
+    setMessages([]);
+    setStudentA("");
+    setStudentB("");
+    loadTestCase(1);
     fetchStudents();
   }, []);
+
+  // Load test case from backend
+  const loadTestCase = async (caseNumber) => {
+    setLoading(true);
+    try {
+      await fetch(`${API_BASE}/load-testcase/${caseNumber}`, {
+        method: 'POST'
+      });
+      await fetchStudents();
+    } catch (error) {
+      console.error('Error loading test case:', error);
+    }
+    setLoading(false);
+  };
 
   const fetchStudents = async () => {
     try {
@@ -92,43 +112,39 @@ export default function ChatHistory() {
     setLoading(false);
   };
 
-  const simulateThreads = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${API_BASE}/simulate-threads`, {
-        method: 'POST'
-      });
-      const data = await response.json();
-      
-      if (data.success) {
-        // Set the participants as selected students
-        setStudentA(data.participants[0]);
-        setStudentB(data.participants[1]);
-        
-        // Fetch the new chat history
-        setTimeout(() => fetchChatHistory(), 500);
-      }
-    } catch (error) {
-      console.error('Error simulating threads:', error);
-    }
-    setLoading(false);
-  };
 
   return (
-    <div style={{ padding: '20px', maxWidth: '1000px', margin: '0 auto' }}>
-      <h1>Chat History</h1>
+    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+      <h1 style={{ color: "#EDE7E3" }}>Chat History</h1>
 
       <div style={{ 
-        backgroundColor: '#f5f5f5', 
+        backgroundColor: '#489FB5', 
         padding: '20px', 
         borderRadius: '8px',
         marginBottom: '20px' 
       }}>
-        <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Student A:</label>
+        <select
+          value={selectedCase}
+          onChange={(e) => {
+            const value = e.target.value;
+            setSelectedCase(value);
+            setMessages([]);
+            setStudentA("");
+            setStudentB("");
+            loadTestCase(parseInt(value));
+          }}
+          style={{ padding: '8px', minWidth: '200px', marginRight: '20px', border: '2px solid #82C0CC', borderRadius: '4px'}}
+          disabled={loading}
+        >
+          <option value="1">Test Case 1</option>
+          <option value="2">Test Case 2</option>
+          <option value="3">Test Case 3</option>
+        </select>
+        <label style={{ marginRight: '10px', fontWeight: 'bold', color: '#EDE7E3' }}>Student A:</label>
         <select 
           value={studentA} 
           onChange={(e) => setStudentA(e.target.value)}
-          style={{ padding: '8px', minWidth: '200px', marginRight: '20px' }}
+          style={{ padding: '8px', minWidth: '200px', marginRight: '20px', border: '2px solid #82C0CC', borderRadius: '4px'}}
         >
           <option value="">Select Student A</option>
           {students.map(s => (
@@ -138,11 +154,11 @@ export default function ChatHistory() {
           ))}
         </select>
 
-        <label style={{ marginRight: '10px', fontWeight: 'bold' }}>Student B:</label>
+        <label style={{ marginRight: '10px', fontWeight: 'bold', color: '#EDE7E3' }}>Student B:</label>
         <select 
           value={studentB} 
           onChange={(e) => setStudentB(e.target.value)}
-          style={{ padding: '8px', minWidth: '200px' }}
+          style={{ padding: '8px', minWidth: '200px', border: '2px solid #82C0CC', borderRadius: '4px' }}
         >
           <option value="">Select Student B</option>
           {students.filter(s => s.name !== studentA).map(s => (

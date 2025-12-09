@@ -8,9 +8,9 @@ import ChatHistory from "./pages/ChatHistory";
 
 export default function App() {
   return (
-    <div>
+    <div style = {{ backgroundColor: "#16697A", minHeight: "100vh", width: "100vw"}}>
       <NavBar />
-      <main style={{ padding: "20px" }}>
+      <main style={{ padding: "20px"}}>
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/student-graph" element={<StudentGraph />} />

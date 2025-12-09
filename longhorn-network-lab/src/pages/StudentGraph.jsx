@@ -60,7 +60,7 @@ export default function StudentGraph() {
   const displayData = { nodes: graphData.nodes, links: combinedLinks };
 
   // Assign colors to roommate pairs
-  const colors = ["orange", "green", "purple", "red", "yellow", "cyan"];
+  const colors = ["#FFA62B", "#EDE7E3", "#489FB5", "#FFA62B", "#EDE7E3", "#489FB5"];
   const nodeColorMap = {};
 
   roommateLinks.forEach((link, idx) => {
@@ -70,7 +70,7 @@ export default function StudentGraph() {
   });
 
   const nodeColor = (node) =>
-    showRoommates && nodeColorMap[node.id] ? nodeColorMap[node.id] : "lightblue";
+    showRoommates && nodeColorMap[node.id] ? nodeColorMap[node.id] : "#82C0CC";
 
   const nodeVal = 6;
 
@@ -87,44 +87,52 @@ export default function StudentGraph() {
     !link.isRoommate && link.weight ? `${link.weight}` : "";
 
   return (
-    <div>
-      <h1>Student Graph</h1>
+    <div style={{ padding: '20px', maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
+      <h1 style={{ color: "#EDE7E3" }}>Student Graph</h1>
+      <div style={{ 
+        backgroundColor: '#489FB5', 
+        padding: '20px', 
+        borderRadius: '8px',
+        marginBottom: '20px',
+        maxWidth: '650px', margin: '0 auto' 
+      }}>
+        <select
+          value={selectedCase}
+          onChange={(e) => {
+            setShowRoommates(false);
+            setSelectedCase(e.target.value);
+            loadTestCase(parseInt(e.target.value));
+          }}
+          style={{ padding: '8px', minWidth: '200px', marginRight: '20px', border: '2px solid #82C0CC', borderRadius: '4px'}}
+          disabled={loading}
+        >
+          <option value="1">Test Case 1</option>
+          <option value="2">Test Case 2</option>
+          <option value="3">Test Case 3</option>
+        </select>
 
-      <select
-        value={selectedCase}
-        onChange={(e) => {
-          setSelectedCase(e.target.value);
-          loadTestCase(parseInt(e.target.value));
-        }}
-        style={{ padding: '8px', minWidth: '200px', marginRight: '20px' }}
-        disabled={loading}
-      >
-        <option value="1">Test Case 1</option>
-        <option value="2">Test Case 2</option>
-        <option value="3">Test Case 3</option>
-      </select>
+        <button
+          onClick={() => {
+            fetch(`${API_BASE}/assign-roommates`, { method: 'POST' })
+              .then(() => fetchRoommates())
+              .catch(err => console.error('Error assigning roommates:', err));
+          }}
+          style={{ marginLeft: "20px", border: "2px solid #82C0CC" }}
+          disabled={loading}
+        >
+          Assign Roommates
+        </button>
+        
+        <button
+          onClick={() => setShowRoommates(!showRoommates)}
+          style={{ marginLeft: "20px", border: "2px solid #82C0CC" }}
+          disabled={loading}
+        >
+          {showRoommates ? "Hide Roommate Pairs" : "Show Roommate Pairs"}
+        </button>
 
-      <button
-        onClick={() => {
-          fetch(`${API_BASE}/assign-roommates`, { method: 'POST' })
-            .then(() => fetchRoommates())
-            .catch(err => console.error('Error assigning roommates:', err));
-        }}
-        style={{ marginLeft: "10px" }}
-        disabled={loading}
-      >
-        Assign Roommates
-      </button>
-      
-      <button
-        onClick={() => setShowRoommates(!showRoommates)}
-        style={{ marginLeft: "10px" }}
-        disabled={loading}
-      >
-        {showRoommates ? "Hide Roommate Pairs" : "Show Roommate Pairs"}
-      </button>
-
-      {loading && <p>Loading...</p>}
+        {loading && <p>Loading...</p>}
+      </div>
 
       <ForceGraph2D
         graphData={displayData}
@@ -133,8 +141,20 @@ export default function StudentGraph() {
         linkLabel={linkLabel}
         nodeColor={nodeColor}
         nodeVal={nodeVal}
-        width={900}
-        height={600}
+        width={800}
+        height={400}
+        style={{ margin: '0 auto' }}
+
+        d3ForceConfig={{
+          // Pulls nodes closer together
+          charge: (force) => force.strength(-10),
+
+          // Pull everything toward the center so groups don't float away
+          center: (force) => force.strength(1.2),
+
+          // Increase overall gravity force
+          gravity: (force) => force.strength(0.5),
+        }}
 
         nodeCanvasObject={(node, ctx, globalScale) => {
           ctx.beginPath();
@@ -144,7 +164,7 @@ export default function StudentGraph() {
 
           const fontSize = 14 / globalScale;
           ctx.font = `${fontSize}px Sans-Serif`;
-          ctx.fillStyle = "black";
+          ctx.fillStyle = "white";
           ctx.textAlign = "center";
           ctx.textBaseline = "bottom";
           ctx.fillText(node.id, node.x, node.y - nodeVal - 2);
@@ -166,7 +186,7 @@ export default function StudentGraph() {
 
             const fontSize = MAX_FONT_SIZE / globalScale;
             ctx.font = `${fontSize}px Sans-Serif`;
-            ctx.fillStyle = "black";
+            ctx.fillStyle = "white";
             ctx.textAlign = "center";
             ctx.textBaseline = "middle";
 
